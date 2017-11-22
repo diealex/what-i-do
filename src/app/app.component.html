@@ -2,31 +2,40 @@
   <button (click)="login()" *ngIf="!(user | async)?.uid">Anonymous Login</button>
   <button (click)="logout()" *ngIf="(user | async)?.uid">Logout</button>
 
-  <input 
-  type="text" 
-  id="message" 
-  *ngIf="(user | async)?.uid" 
-  placeholder="What is it that you do?" 
-  (keyup.enter)="Send($event.target.value)" 
-  [(ngModel)]="msgVal" 
-  />
-  
-  <div id="details-container">
-      <p 
-      *ngFor="let item of items | async" 
-      draggable="true"
-      [@flyInOut]       
-      >      
-        <img 
-          src="../assets/images/pin.png" 
-          (click)="Delete(item.$key)"
-          (mouseenter)="$event.target.src='../assets/images/del.png'; rotation('onmouseover', item.$key)"  
-          (mouseleave)="rotation('onmouseout'); $event.target.src='../assets/images/pin.png'"
-          [@rotate]='getRotation(item.$key)'
-          (@rotate.done)="animationDone($event)"
-          (@rotate.start)="animationStart($event)"
-        />
-      {{item.message}} <br>{{item.$key}}
-      </p>      
-  </div>
+  <form 
+    class = "container"
+    [formGroup] = "form"
+  >
+    <input 
+      type="text" 
+      id="message"
+      name="message"
+      formControlName = "message" 
+      *ngIf="(user | async)?.uid" 
+      placeholder="What is it that you do?"
+      (keyup.enter)="Send($event.target.value, form.valid)"
+      [(ngModel)]="msgVal"
+    />
+
+    <div id="details-container">
+        <p 
+          *ngFor="let item of items | async" 
+          draggable="true"
+          [@flyInOut]
+        >
+          <img 
+            src="../assets/images/pin.png" 
+            (click)="Delete(item.$key)"
+            (mouseenter)="$event.target.src='../assets/images/del.png'; rotation('onmouseover', item.$key)"  
+            (mouseleave)="rotation('onmouseout'); $event.target.src='../assets/images/pin.png'"
+            [@spin]='getRotation(item.$key)'
+            (@spin.done)="animationDone($event)"
+            (@spin.start)="animationStart($event)"
+          />
+          {{item.message}} 
+          <br/>
+          {{item.$key}}
+        </p>
+    </div>
+  </form>
 </div>

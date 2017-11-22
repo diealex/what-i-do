@@ -1,11 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChange  } from '@angular/core';
 import { AngularFireDatabase, FirebaseListObservable } from 'angularfire2/database';
 import { AngularFireAuth } from 'angularfire2/auth';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 import * as firebase from 'firebase/app';
 import {Observable} from 'rxjs/Observable';
 
-import { Input } from '@angular/core';
 import { trigger, state, style, animate, transition, group, keyframes } from '@angular/animations';
 
 @Component({
@@ -13,32 +13,32 @@ import { trigger, state, style, animate, transition, group, keyframes } from '@a
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
   animations: [
-trigger('flyInOut', [
-    state('in', style({transform: 'scale(1)', opacity:1 })),
-    transition('void => *', [
-      style({transform: 'scale(0.3)', 
-            opacity: 0,
-           }),
-      animate('0.6s 0.1s ease-in')
+    trigger('flyInOut', [
+      state('in', style({transform: 'scale(1) rotate(0deg) translateX(0)', opacity:1 })),
+      transition('void => *', [
+          style({transform: 'scale(1) rotate(0deg) translateX(100%)', 
+                opacity:1
+              }),
+          animate('0.2s 0.1s ease-in')
+        ]),
+      transition('* => void', [
+          style({transform: 'scale(1.2) rotate(0deg) translateX(0)'}),
+          animate('0.6s 0.1s ease-out', style({transform: 'scale(0) rotate(-720deg) translateX(0)', opacity:0}))
+        ])
     ]),
-    transition('* => void', [
-      style({transform: 'scale(1.2)'}),
-      animate('0.5s 0.1s ease-out', style({transform: 'scale(0.5)', opacity:0}))
-    ])
-  ]),
 
- trigger('rotate', [
-    state('onmouseover', style({
-      transform: 'rotate(90deg)'
-    })),
-    state('onmouseout',   style({
-      transform: 'rotate(0deg)'
-    })),
-    transition('onmouseover => onmouseout', animate('0.3s ease')),
-    transition('onmouseout => onmouseover', animate('0.3s ease'))
-  ])
+    trigger('spin', [
+        state('onmouseover', style({
+          transform: 'rotate(90deg)'
+        })),
+        state('onmouseout',   style({
+          transform: 'rotate(0deg)'
+        })),
+        transition('onmouseover => onmouseout', animate('0.3s ease')),
+        transition('onmouseout => onmouseover', animate('0.3s ease'))
+      ])
 
-]
+  ]
 })
 
 export class AppComponent {
@@ -53,8 +53,7 @@ export class AppComponent {
       query: {
         limitToLast: 50
       }
-    }
-    );
+    });
     
     this.user = this.afAuth.authState;
 
@@ -62,24 +61,26 @@ export class AppComponent {
 
   login() {
     this.afAuth.auth.signInAnonymously();
-}
+  }
 
-logout() {
+  logout() {
     this.afAuth.auth.signOut();
-}
+  }
 
-Send(desc: string) {
+  Send(desc: string, valid: boolean) {
+    if (!valid) 
+      return;
     this.items.push({ message: desc});
-    this.msgVal = '';    
-}
+    this.msgVal = '';        
+  }
 
-Delete(key: string) {
-  this.items.remove(key);
-}
+  Delete(key: string) {
+    this.items.remove(key);
+  }
 
-Move () {
+  Move () {
 
-}
+  }
 
 state: string = '';
 key: string = '';
@@ -100,4 +101,17 @@ animationStart (event: any){
     console.log('is started');
 }
 
+ form;
+  ngOnInit () {
+    this.form = new FormGroup ({
+      message: new FormControl( '', Validators.compose([
+        Validators.required,
+        Validators.minLength(3),
+        Validators.maxLength(15),
+        //Validators.pattern('[\\w\\-\\s\\/]+')        
+      ])) 
+    });
+  }
+
+  
 }

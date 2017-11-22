@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import * as firebase from 'firebase/app';
 import {Observable} from 'rxjs/Observable';
@@ -19,7 +19,7 @@ export const firebaseConfig = {
   apiKey: "AIzaSyByduS-59KYPn3rdloed23hY0bVvimzkgI",
   authDomain: "what-i-do-af8f9.firebaseapp.com",
   databaseURL: "https://what-i-do-af8f9.firebaseio.com",
-  storageBucket: "",
+  storageBucket: "what-i-do-af8f9.appspot.com/",
   messagingSenderId: "764743703692"
 };
 
@@ -29,7 +29,7 @@ export const firebaseConfig = {
   ],
   imports: [
     BrowserModule,
-    FormsModule,
+    ReactiveFormsModule,
     HttpModule,
     AngularFireModule.initializeApp(firebaseConfig),
     AngularFireDatabaseModule,
